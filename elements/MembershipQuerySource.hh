@@ -3,15 +3,18 @@
 #include <click/element.hh>
 CLICK_DECLS
 
+typedef struct { unsigned value : 4; } uint4_t;
+typedef struct { unsigned value : 3; } uint3_t;
+
 
 struct igmpquerypacket {
     
-    uint8_t querytype = 0x11;
+    uint8_t querytype;
     uint8_t maxrespcode;
     uint16_t checksum;
     IPAddress groupaddress;
-    uint4_t resv
-    uint1_t s;
+    uint4_t resv;
+    bool s;
     uint3_t qrv;
     uint8_t qqic;
     uint16_t numsources;
