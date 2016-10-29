@@ -14,7 +14,7 @@ MembershipReportSource::~MembershipReportSource()
 
 int MembershipReportSource::configure(Vector<String> &conf, ErrorHandler *errh) {
 	if (cp_va_kparse(conf, this, errh, "SRC", cpkM, cpIPAddress, &_srcIP, cpEnd) < 0) return -1;
-	_dstIP = 224.0.0.22;
+	_dstIP = IPAddress(String("224.0.0.22"));
 	return 0;
 }
 
@@ -53,7 +53,7 @@ Packet* MembershipReportSource::make_packet() {
 
 	_sequence++;
 
-	igmph->checksum = click_in_cksum((const unsigned char *)igmph, sizeof(igmp_query_packet));
+	igmph->checksum = click_in_cksum((const unsigned char *)igmph, sizeof(igmp_report_packet));
 
 	q->set_dst_ip_anno(_dstIP);
 

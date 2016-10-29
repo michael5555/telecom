@@ -14,7 +14,7 @@ struct group_record {
 	uint8_t aux_len;//=0
 	uint16_t numsources;
 	IPAddress multicast;
-	vector<IPAddress> adresses;
+	Vector<IPAddress> adresses;
 };
 
 struct igmp_report_packet {
