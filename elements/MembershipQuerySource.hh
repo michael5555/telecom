@@ -44,6 +44,7 @@ class MembershipQuerySource : public Element {
 		Packet* make_packet();
 
 		IPAddress _srcIP;
+		IPAddress _dstIP;
 		uint32_t _sequence;
 };
 
