@@ -51,7 +51,7 @@ Packet* MembershipQuerySource::make_packet() {
 
 	igmph->querytype = 0x11;
 	igmph->maxrespcode = 100;
-	igmph->fields->qrv = 2;
+	igmph->fields->qrv.value = 2;
 	igmph->qqic = 125;
 
 	_sequence++;
