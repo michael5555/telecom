@@ -1,0 +1,51 @@
+#ifndef CLICK_MEMBERSHIPREPORTSOURCE_HH
+#define CLICK_MEMBERSHIPREPORTSOURCE_HH
+#include <click/element.hh>
+#include <click/ipaddress.hh>
+
+CLICK_DECLS
+
+typedef struct { unsigned value : 4; } uint4_t;
+typedef struct { unsigned value : 3; } uint3_t;
+typedef struct { unsigned value : 1; } uint1_t;
+
+struct group_record {
+	uint8_t type;
+	uint8_t aux_len;//=0
+	uint16_t numsources;
+	IPAddress multicast;
+	vector<IPAddress> adresses;
+};
+
+struct igmp_report_packet {
+	uint8_t querytype;//=0x22
+	uint8_t reserved;//=0
+	uint16_t checksum;
+	uint16_t reserved2;//=0
+	uint16_t numgroups;//??
+	Vector<group_record> groups;//??
+};
+
+class MembershipReportSource : public Element {
+public:
+	MembershipReportSource();
+	~MembershipReportSource();
+
+	const char *class_name() const { return "MembershipReportSource"; }
+	const char *port_count() const { return "0/1"; }
+	const char *processing() const { return PULL; }
+	int configure(Vector<String>&, ErrorHandler*);
+
+	Packet* pull(int);
+
+private:
+	Packet* make_packet();
+
+	IPAddress _srcIP;
+	IPAddress _dstIP;
+	uint32_t _sequence;
+};
+
+CLICK_ENDDECLS
+#endif
+
