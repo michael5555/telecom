@@ -5,10 +5,6 @@
 
 CLICK_DECLS
 
-typedef struct { unsigned value : 4; } uint4_t;
-typedef struct { unsigned value : 3; } uint3_t;
-typedef struct { unsigned value : 1; } uint1_t;
-
 struct group_record {
 	uint8_t type;
 	uint8_t aux_len;//=0
