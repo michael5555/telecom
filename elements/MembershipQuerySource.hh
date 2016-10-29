@@ -1,6 +1,8 @@
 #ifndef CLICK_MEMBERSHIPQUERYSOURCE_HH
 #define CLICK_MEMBERSHIPQUERYSOURCE_HH
 #include <click/element.hh>
+#include <click/ipaddress.hh>
+
 CLICK_DECLS
 
 typedef struct { unsigned value : 4; } uint4_t;

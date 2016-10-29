@@ -2,6 +2,8 @@
 #include <click/confparse.hh>
 #include <click/error.hh>
 #include "MembershipQuerySource.hh"
+#include <clicknet/ip.h>
+#include <clicknet/ether.h>
 
 CLICK_DECLS
 MembershipQuerySource::MembershipQuerySource()
@@ -42,7 +44,7 @@ Packet* MembershipQuerySource::make_packet() {
 	iph->ip_p = 2;
 	iph->ip_ttl = 1;
 	iph->ip_src = _srcIP;
-	iph->ip_dst = _dstIP;//depends on grp
+	iph->ip_dst = 0.0.0.0;//depends on grp
 	iph->ip_sum = click_in_cksum((unsigned char *)iph, sizeof(click_ip));
 
 	igmp_query_packet *igmph = (igmp_query_packet *)(iph + 1);
