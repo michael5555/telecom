@@ -18,6 +18,7 @@ int MembershipQuerySource::configure(Vector<String> &conf, ErrorHandler *errh) {
 	this->qrv.value = 2;
 	this->maxrespcode = 100;
 	this->qqic = 125;
+	this->group = IPAddress(String("0.0.0.0"));
 	return 0;
 }
 
@@ -47,6 +48,12 @@ Packet* MembershipQuerySource::make_packet() {
 	iph->ip_p = 2;
 	iph->ip_ttl = 1;
 	iph->ip_src = _srcIP;
+	if (group == IPAddress(String("0.0.0.0")) {
+		_dstIP = IPAddress(String("224.0.0.1"));
+	}
+	else {
+		_dstIP = group;
+	}
 	iph->ip_dst = _dstIP;//depends on grp
 	iph->ip_sum = click_in_cksum((unsigned char *)iph, sizeof(click_ip));
 
@@ -57,6 +64,7 @@ Packet* MembershipQuerySource::make_packet() {
 	igmph->maxrespcode = this->maxrespcode;
 	igmph->fields->qrv = this->qrv;
 	igmph->qqic = this->qqic;
+	igmph->groupaddress = this->group;
 
 	_sequence++;
 
@@ -92,11 +100,19 @@ int MembershipQuerySource::writer(const String &conf, Element *e, void *thunk, E
 	return 0;
 }
 
+int MembershipQuerySource::writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
+	MembershipQuerySource* me = (MembershipQuerySource *)e;
+	IPAddress input;
+	if (cp_va_kparse(conf, me, errh, "INPUT", cpkM, cpIPAddress, &input, cpEnd) < 0) return -1;
+	me->group = input;
+}
+
 void MembershipQuerySource::add_handlers() {
 	add_write_handler("s", writer, 0);
 	add_write_handler("qrv", writer, 1);
 	add_write_handler("maxrespcode", writer, 2);
 	add_write_handler("qqic", writer, 3);
+	add_write_handler("ip", ipwriter, 0);
 }
 
 CLICK_ENDDECLS

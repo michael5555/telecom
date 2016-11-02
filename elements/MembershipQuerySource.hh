@@ -41,15 +41,16 @@ class MembershipQuerySource : public Element {
 		Packet* pull(int);
 
 		static int writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh);
+		static int ipwriter(const String &conf, Element *e, void *thunk, ErrorHandler* errh);
 		void add_handlers();
 
 	private:
 		Packet* make_packet();
-
 		uint1_t s;
 		uint3_t qrv;
 		uint8_t maxrespcode;
 		uint8_t qqic;
+		IPAddress group;
 
 		IPAddress _srcIP;
 		IPAddress _dstIP;
