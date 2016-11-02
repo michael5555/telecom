@@ -46,6 +46,8 @@ class MembershipQuerySource : public Element {
 	private:
 		Packet* make_packet();
 
+		void setS(uint1_t news);
+
 		uint1_t s;
 		uint3_t qrv;
 		uint8_t maxrespcode;

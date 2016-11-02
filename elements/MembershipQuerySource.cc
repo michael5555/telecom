@@ -53,9 +53,9 @@ Packet* MembershipQuerySource::make_packet() {
 	igmp_query_packet *igmph = (igmp_query_packet *)(iph + 1);
 
 	igmph->querytype = 0x11;
-	igmph->fields->s.value = this->s;
+	igmph->fields->s = this->s;
 	igmph->maxrespcode = this->maxrespcode;
-	igmph->fields->qrv.value = this->qrv;
+	igmph->fields->qrv = this->qrv;
 	igmph->qqic = this->qqic;
 
 	_sequence++;
@@ -67,20 +67,24 @@ Packet* MembershipQuerySource::make_packet() {
 	return q;
 }
 
+void setS(uint1_t news) {
+	this->s = news;
+}
+
 int MembershipQuerySource::writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
 	MembershipQuerySource* me = (MembershipQuerySource *)e;
 	int input;
 	if (cp_va_kparse(conf, me, errh, "INPUT", cpkM, cpInteger, &input, cpEnd) < 0) return -1;
 	switch ((intptr_t)thunk) {
 	case 0:
-		uint1_t correct;
-		correct.value = input;
-		this->s = correct;
+		uint1_t correct1;
+		correct1.value = input;
+		setS(correct1);
 		return 0;
 	case 1:
-		uint3_t correct;
-		correct.value = input;
-		this->qrv = correct;
+		uint3_t correct3;
+		correct3.value = input;
+		this->qrv = correct3;
 		return 0;
 	case 2:
 		this->maxrespcode = input;
