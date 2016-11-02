@@ -14,8 +14,8 @@ MembershipQuerySource::~ MembershipQuerySource()
 
 int MembershipQuerySource::configure(Vector<String> &conf, ErrorHandler *errh) {
 	if (cp_va_kparse(conf, this, errh, "SRC", cpkM, cpIPAddress, &_srcIP, cpEnd) < 0) return -1;
-	this->s = 0;
-	this->qrv = 2;
+	this->s.value = 0;
+	this->qrv.value = 2;
 	this->maxrespcode = 100;
 	this->qqic = 125;
 	return 0;
@@ -69,22 +69,24 @@ Packet* MembershipQuerySource::make_packet() {
 
 int MembershipQuerySource::writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
 	MembershipQuerySource* me = (MembershipQuerySource *)e;
-	uint8_t* input;
+	int input;
 	if (cp_va_kparse(conf, me, errh, "INPUT", cpkM, cpInteger, &input, cpEnd) < 0) return -1;
 	switch ((intptr_t)thunk) {
 	case 0:
-		uint1_t* correct = (uint1_t*)input;
-		this->s = *correct;
+		uint1_t correct;
+		correct.value = input;
+		this->s = correct;
 		return 0;
 	case 1:
-		uint3_t* correct = (uint3_t*)input;
-		this->qrv = *correct;
+		uint3_t correct;
+		correct.value = input;
+		this->qrv = correct;
 		return 0;
 	case 2:
-		this->maxrespcode = *input;
+		this->maxrespcode = input;
 		return 0;
 	case 3:
-		this->qqic = *input;
+		this->qqic = input;
 		return 0;
 	}
 	return 0;
