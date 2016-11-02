@@ -67,10 +67,6 @@ Packet* MembershipQuerySource::make_packet() {
 	return q;
 }
 
-void setS(uint1_t news) {
-	this->s = news;
-}
-
 int MembershipQuerySource::writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
 	MembershipQuerySource* me = (MembershipQuerySource *)e;
 	int input;
@@ -79,18 +75,18 @@ int MembershipQuerySource::writer(const String &conf, Element *e, void *thunk, E
 	case 0:
 		uint1_t correct1;
 		correct1.value = input;
-		setS(correct1);
+		me->s = correct1;
 		return 0;
 	case 1:
 		uint3_t correct3;
 		correct3.value = input;
-		this->qrv = correct3;
+		me->qrv = correct3;
 		return 0;
 	case 2:
-		this->maxrespcode = input;
+		me->maxrespcode = input;
 		return 0;
 	case 3:
-		this->qqic = input;
+		me->qqic = input;
 		return 0;
 	}
 	return 0;
