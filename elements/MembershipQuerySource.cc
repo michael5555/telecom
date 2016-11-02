@@ -14,7 +14,10 @@ MembershipQuerySource::~ MembershipQuerySource()
 
 int MembershipQuerySource::configure(Vector<String> &conf, ErrorHandler *errh) {
 	if (cp_va_kparse(conf, this, errh, "SRC", cpkM, cpIPAddress, &_srcIP, cpEnd) < 0) return -1;
-	
+	this->s = 0;
+	this->qrv = 2;
+	this->maxrespcode = 100;
+	this->qqic = 125;
 	return 0;
 }
 
@@ -50,9 +53,10 @@ Packet* MembershipQuerySource::make_packet() {
 	igmp_query_packet *igmph = (igmp_query_packet *)(iph + 1);
 
 	igmph->querytype = 0x11;
-	igmph->maxrespcode = 100;
-	igmph->fields->qrv.value = 2;
-	igmph->qqic = 125;
+	igmph->fields->s.value = this->s;
+	igmph->maxrespcode = this->maxrespcode;
+	igmph->fields->qrv.value = this->qrv;
+	igmph->qqic = this->qqic;
 
 	_sequence++;
 
@@ -61,6 +65,36 @@ Packet* MembershipQuerySource::make_packet() {
 	q->set_dst_ip_anno(_dstIP);
 
 	return q;
+}
+
+int MembershipQuerySource::writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
+	MembershipQuerySource* me = (MembershipQuerySource *)e;
+	uint8_t* input;
+	if (cp_va_kparse(conf, me, errh, "INPUT", cpkM, cpInteger, &input, cpEnd) < 0) return -1;
+	switch ((intptr_t)thunk) {
+	case 0:
+		uint1_t* correct = (uint1_t*)input;
+		this->s = *correct;
+		return 0;
+	case 1:
+		uint3_t* correct = (uint3_t*)input;
+		this->qrv = *correct;
+		return 0;
+	case 2:
+		this->maxrespcode = *input;
+		return 0;
+	case 3:
+		this->qqic = *input;
+		return 0;
+	}
+	return 0;
+}
+
+void MembershipQuerySource::add_handlers() {
+	add_write_handler("s", writer, 0);
+	add_write_handler("qrv", writer, 1);
+	add_write_handler("maxrespcode", writer, 2);
+	add_write_handler("qqic", writer, 3);
 }
 
 CLICK_ENDDECLS
