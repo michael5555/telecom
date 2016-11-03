@@ -48,7 +48,7 @@ Packet* MembershipQuerySource::make_packet() {
 	iph->ip_p = 2;
 	iph->ip_ttl = 1;
 	iph->ip_src = _srcIP;
-	if (group == IPAddress(String("0.0.0.0")) {
+	if (group == IPAddress(String("0.0.0.0"))) {
 		_dstIP = IPAddress(String("224.0.0.1"));
 	}
 	else {
@@ -100,7 +100,7 @@ int MembershipQuerySource::writer(const String &conf, Element *e, void *thunk, E
 	return 0;
 }
 
-int MembershipQuerySource::writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
+int MembershipQuerySource::ipwriter(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
 	MembershipQuerySource* me = (MembershipQuerySource *)e;
 	IPAddress input;
 	if (cp_va_kparse(conf, me, errh, "INPUT", cpkM, cpIPAddress, &input, cpEnd) < 0) return -1;
