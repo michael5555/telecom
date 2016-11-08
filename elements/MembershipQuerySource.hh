@@ -5,14 +5,10 @@
 
 CLICK_DECLS
 
-typedef struct { unsigned value : 4; } uint4_t;
-typedef struct { unsigned value : 3; } uint3_t;
-typedef struct { unsigned value : 1; } uint1_t;
-
 struct resv_s_qrv {
-	uint4_t resv;//=0
-	uint1_t s;//=0, change using handler
-	uint3_t qrv;//=2, change using handler
+	int resv : 4;
+	int s : 1;
+	int qrv : 3;
 };
 
 
@@ -46,8 +42,8 @@ class MembershipQuerySource : public Element {
 
 	private:
 		Packet* make_packet();
-		uint1_t s;
-		uint3_t qrv;
+		int s;
+		int qrv;
 		uint8_t maxrespcode;
 		uint8_t qqic;
 		IPAddress group;
