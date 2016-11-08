@@ -45,7 +45,7 @@ Packet* MembershipQuerySource::make_packet() {
 	iph->ip_len = htons(q->length());
 	uint16_t ip_id = ((_sequence) % 0xFFFF) + 1; // ensure ip_id != 0
 	iph->ip_id = htons(ip_id);
-	iph->ip_p = 2;
+	iph->ip_p = IP_PROTO_IGMP;
 	iph->ip_ttl = 1;
 	iph->ip_src = _srcIP;
 	if (group == IPAddress(String("0.0.0.0"))) {
@@ -56,21 +56,26 @@ Packet* MembershipQuerySource::make_packet() {
 	}
 	iph->ip_dst = _dstIP;//depends on grp
 	iph->ip_sum = click_in_cksum((unsigned char *)iph, sizeof(click_ip));
+    
+    q->set_dst_ip_anno(_dstIP);
+
 
 	igmp_query_packet *igmph = (igmp_query_packet *)(iph + 1);
+    
 
 	igmph->querytype = 0x11;
-	igmph->fields->s = this->s;
+    struct resv_s_qrv field = {0,0,2};
+    
+    igmph->fields = &field;
+
 	igmph->maxrespcode = this->maxrespcode;
-	igmph->fields->qrv = this->qrv;
 	igmph->qqic = this->qqic;
 	igmph->groupaddress = this->group;
-
+    igmph->numsources = 0;
 	_sequence++;
 
 	igmph->checksum = click_in_cksum((const unsigned char *)igmph, sizeof(igmp_query_packet));
 
-	q->set_dst_ip_anno(_dstIP);
 
 	return q;
 }
@@ -81,14 +86,10 @@ int MembershipQuerySource::writer(const String &conf, Element *e, void *thunk, E
 	if (cp_va_kparse(conf, me, errh, "INPUT", cpkM, cpInteger, &input, cpEnd) < 0) return -1;
 	switch ((intptr_t)thunk) {
 	case 0:
-		uint1_t correct1;
-		correct1.value = input;
-		me->s = correct1;
+		me->s = input;
 		return 0;
 	case 1:
-		uint3_t correct3;
-		correct3.value = input;
-		me->qrv = correct3;
+		me->qrv = input;
 		return 0;
 	case 2:
 		me->maxrespcode = input;

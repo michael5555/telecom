@@ -6,9 +6,9 @@
 CLICK_DECLS
 
 struct resv_s_qrv {
-	int resv : 4;
-	int s : 1;
-	int qrv : 3;
+	unsigned resv : 4;
+	unsigned s : 1;
+	unsigned qrv : 3;
 };
 
 
