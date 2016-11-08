@@ -4,7 +4,6 @@
 #include "MembershipReportSource.hh"
 #include <clicknet/ip.h>
 #include <clicknet/ether.h>
-#include <click/timer.hh>
 
 
 CLICK_DECLS
@@ -18,21 +17,18 @@ int MembershipReportSource::configure(Vector<String> &conf, ErrorHandler *errh) 
 	if (cp_va_kparse(conf, this, errh, "SRC", cpkM, cpIPAddress, &_srcIP, cpEnd) < 0) return -1;
 	_dstIP = IPAddress(String("224.0.0.22"));
 
-	Timer *timer = new Timer(this);
-	timer->initialize(this);
-	timer->schedule_after_msec(1000);
 
 	return 0;
 }
 
-/*Packet* MembershipReportSource::pull(int) {
-	Packet* p = input(0).pull();
+Packet* MembershipReportSource::pull(int) {
+	Packet* p = make_packet();
 	if (p == 0) {
 		return 0;
 	}
 	click_chatter("Got a packet of size %d", p->length());
 	return p;
-}*/
+}
 
 Packet* MembershipReportSource::make_packet() {
 	int headroom = sizeof(click_ether);
@@ -68,13 +64,7 @@ Packet* MembershipReportSource::make_packet() {
 }
 
 
-void MembershipReportSource::run_timer(Timer *timer)
-{
-    if (Packet *q = make_packet()) {
- 	   output(0).push(q);
- 	   timer->reschedule_after_msec(1000);
-    }
-}
+
 
 
 

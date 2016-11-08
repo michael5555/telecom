@@ -23,7 +23,7 @@ int MembershipQuerySource::configure(Vector<String> &conf, ErrorHandler *errh) {
 }
 
 Packet* MembershipQuerySource::pull(int){
-	Packet* p = input(0).pull();
+	Packet* p = make_packet();
 	if(p == 0){
 		return 0;
 	}

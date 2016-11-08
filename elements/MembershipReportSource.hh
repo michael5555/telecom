@@ -28,12 +28,11 @@ public:
 	~MembershipReportSource();
 
 	const char *class_name() const { return "MembershipReportSource"; }
-	const char *port_count() const { return "0/1"; }
-	const char *processing() const { return PUSH; }
+	const char *port_count() const { return "0-1/1"; }
+	const char *processing() const { return PULL; }
 	int configure(Vector<String>&, ErrorHandler*);
 
-	//Packet* pull(int);
-	void run_timer(Timer*);
+	Packet* pull(int);
 
 private:
 	Packet* make_packet();
