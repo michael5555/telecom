@@ -64,12 +64,13 @@ Packet* MembershipQuerySource::make_packet() {
     
 
 	igmph->querytype = 0x11;
-    struct resv_s_qrv field = {0,0,2};
+    struct resv_s_qrv field = resv_s_qrv(0,0,2);
+	
     
-    igmph->fields = &field;
+    igmph->fields = field;
 
 	igmph->maxrespcode = this->maxrespcode;
-	igmph->qqic = this->qqic;
+	igmph->qqic = 125;
 	igmph->groupaddress = this->group;
     igmph->numsources = 0;
 	_sequence++;

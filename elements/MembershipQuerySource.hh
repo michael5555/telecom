@@ -9,6 +9,13 @@ struct resv_s_qrv {
 	unsigned resv : 4;
 	unsigned s : 1;
 	unsigned qrv : 3;
+    
+    resv_s_qrv(int r, int ss , int q){
+        
+        resv = r;
+        s = ss;
+        qrv = q;
+    }
 };
 
 
@@ -18,7 +25,7 @@ struct igmp_query_packet {
     uint8_t maxrespcode;//100, change using handler
     uint16_t checksum;
     IPAddress groupaddress;//HANDLER!!!
-	resv_s_qrv* fields;
+	resv_s_qrv fields;
     uint8_t qqic;//125, change using handler
     uint16_t numsources;//=0
     Vector<IPAddress> source_addresses;//empty
