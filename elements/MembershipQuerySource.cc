@@ -14,8 +14,8 @@ MembershipQuerySource::~ MembershipQuerySource()
 
 int MembershipQuerySource::configure(Vector<String> &conf, ErrorHandler *errh) {
 	if (cp_va_kparse(conf, this, errh, "SRC", cpkM, cpIPAddress, &_srcIP, cpEnd) < 0) return -1;
-	this->s.value = 0;
-	this->qrv.value = 2;
+	this->s = 0;
+	this->qrv = 2;
 	this->maxrespcode = 100;
 	this->qqic = 125;
 	this->group = IPAddress(String("0.0.0.0"));
@@ -23,7 +23,7 @@ int MembershipQuerySource::configure(Vector<String> &conf, ErrorHandler *errh) {
 }
 
 Packet* MembershipQuerySource::pull(int){
-	Packet* p = input(0).pull();
+	Packet* p = make_packet();
 	if(p == 0){
 		return 0;
 	}
