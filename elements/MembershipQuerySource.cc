@@ -4,6 +4,7 @@
 #include "MembershipQuerySource.hh"
 #include <clicknet/ip.h>
 #include <clicknet/ether.h>
+#include <click/timer.hh>
 
 CLICK_DECLS
 MembershipQuerySource::MembershipQuerySource()
