@@ -12,7 +12,13 @@ struct group_record {
 	uint8_t aux_len;//=0
 	uint16_t numsources;
 	IPAddress multicast;
-	Vector<IPAddress> adresses;
+	Vector<IPAddress> addresses;
+};
+
+struct interface_record {
+	IPAddress multicast;
+	Vector<IPAddress> addresses;//=always empty in our case
+	int mode;//2 = exclude , 1 = include
 };
 
 struct igmp_report_packet {
@@ -40,13 +46,13 @@ public:
 	void add_handlers();
 
 private:
-	Packet* make_packet();
+	Packet* make_packet(int);
 
 	IPAddress _srcIP;
 	IPAddress _dstIP;
 	uint32_t _sequence;
 
-
+	Vector<struct interface_record> interface_state;
 };
 
 CLICK_ENDDECLS

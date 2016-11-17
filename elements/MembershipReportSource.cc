@@ -32,28 +32,76 @@ Packet* MembershipReportSource::pull(int) {
 
 int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
 	MembershipReportSource* me = (MembershipReportSource *)e;
-	int input;
-	if (cp_va_kparse(conf, me, errh, cpEnd) < 0) return -1;
+	IPAddress address;
+	if (cp_va_kparse(conf, me, "ADDR", cpkM, cpIPAddress, &address, errh, cpEnd) < 0) return -1;
 	switch ((intptr_t)thunk) {
 	case 0:
-		//create join-packet
-		//put packet on output
-		click_chatter("I joined FeelsGoodMan");
+
+		int send = -1;
+		bool done = false;
+		for (int i = 0; i < interface_state.size(); i++) {
+			send = i;
+			if (address == interface_state[i].multicast) {
+				if (mode == 2) {
+					done = true;
+					send = -1;
+					break;
+				}
+				interface_state[i] = 2;
+				done = true;
+				break;
+			}
+		}
+		if (!done) {
+			struct interface_record newrecord;
+			newrecord.mode = 2;
+			newrecord.multicast = address;
+			interface_state.push_back(newrecord);
+		}
+		if (send != -1) {
+			Packet* p = make_packet(send);
+			output(0).push(p);
+			click_chatter("I left %d FeelsBadMan", address);
+		}
 		break;
 	case 1:
-		//create leave-packet
-		//put packet on output
-		click_chatter("I left FeelsBadMan");
+		int send = -1;
+		bool done = false;
+		for (int i = 0; i < interface_state.size(); i++) {
+			send = i;
+			if (address == interface_state[i].multicast) {
+				if (mode == 1) {
+					done = true;
+					send = -1;
+					break;
+				}
+				interface_state[i] = 1;
+				done = true;
+				break;
+			}
+		}
+		if (!done) {
+			struct interface_record newrecord;
+			newrecord.mode = 1;
+			newrecord.multicast = address;
+			interface_state.push_back(newrecord);
+		}
+		if (send != -1) {
+			Packet* p = make_packet(send);
+			output(0).push(p);
+			click_chatter("I joined %d FeelsGoodMan",address);
+		}
 		break;
+	}
 	return 0;
 }
 
 void MembershipReportSource::add_handlers() {
-	add_write_handler("join", writer, 0);
-	add_write_handler("leave", writer, 1);
+	add_write_handler("leave", writer, 0);
+	add_write_handler("join", writer, 1);
 }
 
-Packet* MembershipReportSource::make_packet() {
+Packet* MembershipReportSource::make_packet(int mode) { //NEEDS TO ADD LIST OF REPORTS!
 	int headroom = sizeof(click_ether);
 	WritablePacket *q = Packet::make(headroom, 0, sizeof(click_ip) + sizeof(struct igmp_report_packet), 0);
 	if (!q)
@@ -76,6 +124,19 @@ Packet* MembershipReportSource::make_packet() {
 	igmp_report_packet *igmph = (igmp_report_packet *)(iph + 1);
 
 	igmph->querytype = 0x22;
+	igmph->numgroups = interface_state.size();
+
+	for (int i = 0; i < interface_state.size(); i++) {
+		struct group_record newrecord;
+		if (i == mode) {
+			newrecord.type = interface_state[i].mode + 2;
+		}
+		else {
+			newrecord.type = interface_state[i].mode;
+		}
+		newrecord.multicast = interface_state[i].multicast;
+		igmph->groups.push_back(newrecord);
+	}
 
 	_sequence++;
 
