@@ -38,10 +38,12 @@ class MembershipQuerySource : public Element {
 		
 		const char *class_name() const	{ return "MembershipQuerySource"; }
 		const char *port_count() const	{ return "0-1/1"; }
-		const char *processing() const	{ return PULL; }
+		const char *processing() const	{ return AGNOSTIC; }
 		int configure(Vector<String>&, ErrorHandler*);
 		
 		Packet* pull(int);
+
+		void run_timer(Timer*);
 
 		static int writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh);
 		static int ipwriter(const String &conf, Element *e, void *thunk, ErrorHandler* errh);
