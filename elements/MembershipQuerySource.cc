@@ -27,14 +27,14 @@ int MembershipQuerySource::configure(Vector<String> &conf, ErrorHandler *errh) {
 	return 0;
 }
 
-Packet* MembershipQuerySource::pull(int){
+/*Packet* MembershipQuerySource::pull(int){
 	Packet* p = make_packet();
 	if(p == 0){
 		return 0;
 	}
 	click_chatter("Got a packet of size %d",p->length());
 	return p;
-}
+}*/
 
 void MembershipQuerySource::run_timer(Timer* timer) {
 	if (Packet* q = make_packet()) {

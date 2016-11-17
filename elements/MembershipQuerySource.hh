@@ -38,10 +38,10 @@ class MembershipQuerySource : public Element {
 		
 		const char *class_name() const	{ return "MembershipQuerySource"; }
 		const char *port_count() const	{ return "0-1/1"; }
-		const char *processing() const	{ return AGNOSTIC; }
+		const char *processing() const	{ return PUSH; }
 		int configure(Vector<String>&, ErrorHandler*);
 		
-		Packet* pull(int);
+		//Packet* pull(int);
 
 		void run_timer(Timer*);
 
