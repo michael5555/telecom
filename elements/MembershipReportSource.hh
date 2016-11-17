@@ -5,6 +5,8 @@
 
 CLICK_DECLS
 
+
+
 struct group_record {
 	uint8_t type;
 	uint8_t aux_len;//=0
