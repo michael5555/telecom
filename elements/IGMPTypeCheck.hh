@@ -1,7 +1,7 @@
 #ifndef CLICK_IGMPTYPECHECK_HH
 #define CLICK_IGMPTYPECHECK_HH
 #include <click/element.hh>
-#include <click/ipaddress.hh>
+#include "MembershipQuerySource.hh"
 
 CLICK_DECLS
 

@@ -2,8 +2,6 @@
 #include <click/confparse.hh>
 #include <click/error.hh>
 #include "IGMPTypeCheck.hh"
-#include <clicknet/ip.h>
-#include <clicknet/ether.h>
 
 CLICK_DECLS
 IGMPTypeCheck::IGMPTypeCheck()
@@ -20,10 +18,10 @@ int IGMPTypeCheck::configure(Vector<String> &conf, ErrorHandler *errh) {
 
 void IGMPTypeCheck::push(int , Packet* p) {
 	if (p == 0) {
-		return 0;
+		return;
 	}
 
-	WritablePacket* q = (WritablePacket*) p;
+	igmp_query_packet* q = (igmp_query_packet*) p;
 
 	if (q->querytype == 0x11) {
 		output(0).push(q);
