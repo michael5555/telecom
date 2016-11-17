@@ -3,6 +3,8 @@
 // Packets for the network are put on output 0
 // Packets for the host are put on output 1
 
+AddressInfo(router_client_network1_address 192.168.2.254/24 00:50:BA:85:84:B1);
+AddressInfo(sourceAddr 192.168.2.1/24 00:50:BA:85:84:B2);
 
 
 
@@ -44,8 +46,6 @@ elementclass Client {
 	// Incoming Packets
 	input
 		-> HostEtherFilter($address,DROP_OTHER false)
-
-
 		-> in_cl :: Classifier(12/0806 20/0001, 12/0806 20/0002, 12/0800)
 		-> arp_res :: ARPResponder($address)
 		-> output;
@@ -55,4 +55,14 @@ elementclass Client {
 	
 	in_cl[2]
 		-> ip;
+
+	source::MembershipReportSource(SRC $address)
+		-> output
 }
+
+
+myclient::Client(sourceAddr,router_client_network1_address)
+	-> ToDump(switch.dump)
+	-> Discard
+
+myclient[1] -> myclient
