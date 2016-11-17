@@ -19,6 +19,11 @@ int MembershipQuerySource::configure(Vector<String> &conf, ErrorHandler *errh) {
 	this->maxrespcode = 100;
 	this->qqic = 125;
 	this->group = IPAddress(String("0.0.0.0"));
+
+	Timer* timer = new Timer(this);
+	timer->initialize(this);
+	timer->schedule_after_msec(1000);
+
 	return 0;
 }
 
@@ -29,6 +34,13 @@ Packet* MembershipQuerySource::pull(int){
 	}
 	click_chatter("Got a packet of size %d",p->length());
 	return p;
+}
+
+void MembershipQuerySource::run_timer(Timer* timer) {
+	if (Packet* q = make_packet()) {
+		output(0).push(q);
+		timer->reschedule_after_msec(1000);
+	}
 }
 
 Packet* MembershipQuerySource::make_packet() {
