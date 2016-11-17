@@ -58,6 +58,7 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 			newrecord.mode = 2;
 			newrecord.multicast = address;
 			me->interface_state.push_back(newrecord);
+			send = 0;
 		}
 		if (send != -1) {
 			Packet* p = me->make_packet(send);
@@ -86,6 +87,7 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 			newrecord.mode = 1;
 			newrecord.multicast = address;
 			me->interface_state.push_back(newrecord);
+			send = 0;
 		}
 		if (send != -1) {
 			Packet* p = me->make_packet(send);
