@@ -30,6 +30,29 @@ Packet* MembershipReportSource::pull(int) {
 	return p;
 }
 
+int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
+	MembershipReportSource* me = (MembershipReportSource *)e;
+	int input;
+	if (cp_va_kparse(conf, me, errh, cpEnd) < 0) return -1;
+	switch ((intptr_t)thunk) {
+	case 0:
+		//create join-packet
+		//put packet on output
+		click_chatter("I joined Kappa");
+		break;
+	case 1:
+		//create leave-packet
+		//put packet on output
+		click_chatter("I left FeelsBadMan");
+		break;
+	return 0;
+}
+
+void MembershipReportSource::add_handlers() {
+	add_write_handler("join", writer, 0);
+	add_write_handler("leave", writer, 1);
+}
+
 Packet* MembershipReportSource::make_packet() {
 	int headroom = sizeof(click_ether);
 	WritablePacket *q = Packet::make(headroom, 0, sizeof(click_ip) + sizeof(struct igmp_report_packet), 0);

@@ -29,10 +29,13 @@ public:
 
 	const char *class_name() const { return "MembershipReportSource"; }
 	const char *port_count() const { return "0-1/1"; }
-	const char *processing() const { return PULL; }
+	const char *processing() const { return PUSH; }
 	int configure(Vector<String>&, ErrorHandler*);
 
-	Packet* pull(int);
+	//Packet* pull(int);
+
+	static int writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh);
+	void add_handlers();
 
 private:
 	Packet* make_packet();
@@ -40,6 +43,8 @@ private:
 	IPAddress _srcIP;
 	IPAddress _dstIP;
 	uint32_t _sequence;
+
+
 };
 
 CLICK_ENDDECLS
