@@ -38,7 +38,7 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 	case 0:
 		//create join-packet
 		//put packet on output
-		click_chatter("I joined Kappa");
+		click_chatter("I joined FeelsGoodMan");
 		break;
 	case 1:
 		//create leave-packet
