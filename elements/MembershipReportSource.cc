@@ -42,7 +42,7 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 		for (int i = 0; i < interface_state.size(); i++) {
 			send = i;
 			if (address == interface_state[i].multicast) {
-				if (mode == 2) {
+				if (interface_state[i].mode == 2) {
 					done = true;
 					send = -1;
 					break;
@@ -70,12 +70,12 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 		for (int i = 0; i < interface_state.size(); i++) {
 			send = i;
 			if (address == interface_state[i].multicast) {
-				if (mode == 1) {
+				if (interface_state[i].mode == 1) {
 					done = true;
 					send = -1;
 					break;
 				}
-				interface_state[i] = 1;
+				interface_state[i].mode = 1;
 				done = true;
 				break;
 			}
