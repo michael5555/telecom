@@ -33,7 +33,7 @@ int MembershipReportSource::configure(Vector<String> &conf, ErrorHandler *errh) 
 int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
 	MembershipReportSource* me = (MembershipReportSource *)e;
 	IPAddress address;
-	if (cp_va_kparse(conf, me, "ADDR", cpkM, cpIPAddress, &address, errh, cpEnd) < 0) return -1;
+	if (cp_va_kparse(conf, me, errh, "ADDR", cpkM, cpIPAddress, &address, cpEnd) < 0) return -1;
 	int send;
 	bool done;
 	switch ((intptr_t)thunk) {
@@ -48,7 +48,7 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 					send = -1;
 					break;
 				}
-				me->interface_state[i] = 2;
+				me->interface_state[i].mode = 2;
 				done = true;
 				break;
 			}
