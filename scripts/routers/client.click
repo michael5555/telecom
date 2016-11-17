@@ -3,17 +3,30 @@
 // Packets for the network are put on output 0
 // Packets for the host are put on output 1
 
+AddressInfo(sourceAddr 192.168.2.1/24 00:50:BA:85:84:B2)
+
+AddressInfo(router_client_network1_address 192.168.2.254/24 00:50:BA:85:84:B1)
+
+
+
+
 elementclass Client {
 	$address, $gateway |
 
 	ip :: Strip(14)
 		-> CheckIPHeader()
+		//-> checker::IGMPTypeCheck
+
+	//checker[0]
 		-> rt :: StaticIPLookup(
 					$address:ip/32 0,
 					$address:ipnet 0,
 					0.0.0.0/0.0.0.0 $gateway 1)
 		-> [1]output;
 	
+	/*checker[1]
+		->Discard*/
+
 	rt[1]
 		-> DropBroadcasts
 		-> ipgw :: IPGWOptions($address)
@@ -48,3 +61,15 @@ elementclass Client {
 	in_cl[2]
 		-> ip;
 }
+
+source::MembershipQuerySource(SRC sourceAddr)
+	->Unqueue
+	->client::Client(sourceAddr,router_client_network1_address)
+
+client[0]
+	-> ToDump(switch.dump)
+	-> Discard
+
+client[1]
+	-> ToDump(switch2.dump)
+	-> Discard
