@@ -21,14 +21,14 @@ int MembershipReportSource::configure(Vector<String> &conf, ErrorHandler *errh) 
 	return 0;
 }
 
-Packet* MembershipReportSource::pull(int) {
+/*Packet* MembershipReportSource::pull(int) {
 	Packet* p = make_packet();
 	if (p == 0) {
 		return 0;
 	}
 	click_chatter("Got a packet of size %d", p->length());
 	return p;
-}
+}*/
 
 int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
 	MembershipReportSource* me = (MembershipReportSource *)e;
@@ -40,15 +40,15 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 	case 0:
 		send = -1;
 		done = false;
-		for (int i = 0; i < interface_state.size(); i++) {
+		for (int i = 0; i < me->interface_state.size(); i++) {
 			send = i;
-			if (address == interface_state[i].multicast) {
-				if (interface_state[i].mode == 2) {
+			if (address == me->interface_state[i].multicast) {
+				if (me->interface_state[i].mode == 2) {
 					done = true;
 					send = -1;
 					break;
 				}
-				interface_state[i] = 2;
+				me->interface_state[i] = 2;
 				done = true;
 				break;
 			}
@@ -57,26 +57,26 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 			struct interface_record newrecord;
 			newrecord.mode = 2;
 			newrecord.multicast = address;
-			interface_state.push_back(newrecord);
+			me->interface_state.push_back(newrecord);
 		}
 		if (send != -1) {
-			Packet* p = make_packet(send);
-			output(0).push(p);
+			Packet* p = me->make_packet(send);
+			me->output(0).push(p);
 			click_chatter("I left FeelsBadMan"); //add address to this!
 		}
 		break;
 	case 1:
 		send = -1;
 		done = false;
-		for (int i = 0; i < interface_state.size(); i++) {
+		for (int i = 0; i < me->interface_state.size(); i++) {
 			send = i;
-			if (address == interface_state[i].multicast) {
-				if (interface_state[i].mode == 1) {
+			if (address == me->interface_state[i].multicast) {
+				if (me->interface_state[i].mode == 1) {
 					done = true;
 					send = -1;
 					break;
 				}
-				interface_state[i].mode = 1;
+				me->interface_state[i].mode = 1;
 				done = true;
 				break;
 			}
@@ -85,11 +85,11 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 			struct interface_record newrecord;
 			newrecord.mode = 1;
 			newrecord.multicast = address;
-			interface_state.push_back(newrecord);
+			me->interface_state.push_back(newrecord);
 		}
 		if (send != -1) {
-			Packet* p = make_packet(send);
-			output(0).push(p);
+			Packet* p = me->make_packet(send);
+			me->output(0).push(p);
 			click_chatter("I joined FeelsGoodMan"); //add address to this!
 		}
 		break;
