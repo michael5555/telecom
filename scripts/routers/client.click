@@ -15,17 +15,18 @@ elementclass Client {
 
 	ip :: Strip(14)
 		-> CheckIPHeader()
-		//-> checker::IGMPTypeCheck
+		-> checker::IGMPTypeCheck
 
-	//checker[0]
+	checker[0]
+			-> Print("blibli", 0)
 		-> rt :: StaticIPLookup(
 					$address:ip/32 0,
 					$address:ipnet 0,
 					0.0.0.0/0.0.0.0 $gateway 1)
 		-> [1]output;
 	
-	/*checker[1]
-		->Discard*/
+	checker[1]
+		->Discard
 
 	rt[1]
 		-> DropBroadcasts
@@ -50,7 +51,10 @@ elementclass Client {
 
 	// Incoming Packets
 	input
-		-> HostEtherFilter($address)
+		-> HostEtherFilter($address,DROP_OTHER false)
+		->Print( "blabla",0)
+
+
 		-> in_cl :: Classifier(12/0806 20/0001, 12/0806 20/0002, 12/0800)
 		-> arp_res :: ARPResponder($address)
 		-> output;
@@ -64,7 +68,8 @@ elementclass Client {
 
 source::MembershipQuerySource(SRC sourceAddr)
 	-> EtherEncap(0x0800, sourceAddr, router_client_network1_address)
-	->client::Client(sourceAddr,router_client_network1_address)
+	-> ToDump(switch3.dump)
+	-> client::Client(sourceAddr,router_client_network1_address)
 
 client[0]
 	-> ToDump(switch.dump)
