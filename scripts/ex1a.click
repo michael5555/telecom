@@ -61,7 +61,7 @@ switch[2]
 	-> checker::IGMPTypeCheck
 
 checker[0]
-	-> [1]ARPQuerier(sourceAddr)
+	-> EtherEncap(0x0800,sourceAddr,responderAddr)
 	-> ToDump(switch.dump)
 	-> Discard
 checker[1]

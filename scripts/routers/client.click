@@ -63,7 +63,7 @@ elementclass Client {
 }
 
 source::MembershipQuerySource(SRC sourceAddr)
-	->Unqueue
+	-> EtherEncap(0x0800, sourceAddr, router_client_network1_address)
 	->client::Client(sourceAddr,router_client_network1_address)
 
 client[0]
