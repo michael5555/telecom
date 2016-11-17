@@ -17,16 +17,20 @@ int IGMPTypeCheck::configure(Vector<String> &conf, ErrorHandler *errh) {
 }
 
 void IGMPTypeCheck::push(int , Packet* p) {
+	WritablePacket *q = p->uniqueify();
+
 	if (p == 0) {
 		return;
 	}
 
-	igmp_query_packet* q = (igmp_query_packet*) p;
+	click_ip *iph = (click_ip *)q->data();
+	igmp_query_packet *igmph = (igmp_query_packet *)(iph + 1);
 
-	if (q->querytype == 0x11) {
+
+	if (igmph->querytype == 0x11) {
 		output(0).push(q);
 	}
-	else if (q->querytype == 0x22) {
+	else if (igmph->querytype == 0x22) {
 		output(0).push(q);
 	}
 	else {
