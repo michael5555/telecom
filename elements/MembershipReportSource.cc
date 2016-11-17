@@ -34,10 +34,12 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 	MembershipReportSource* me = (MembershipReportSource *)e;
 	IPAddress address;
 	if (cp_va_kparse(conf, me, "ADDR", cpkM, cpIPAddress, &address, errh, cpEnd) < 0) return -1;
+	int send;
+	bool done;
 	switch ((intptr_t)thunk) {
 	case 0:
-		int send = -1;
-		bool done = false;
+		send = -1;
+		done = false;
 		for (int i = 0; i < interface_state.size(); i++) {
 			send = i;
 			if (address == interface_state[i].multicast) {
@@ -60,12 +62,12 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 		if (send != -1) {
 			Packet* p = make_packet(send);
 			output(0).push(p);
-			click_chatter("I left %d FeelsBadMan", address);
+			click_chatter("I left FeelsBadMan"); //add address to this!
 		}
 		break;
 	case 1:
-		int send = -1;
-		bool done = false;
+		send = -1;
+		done = false;
 		for (int i = 0; i < interface_state.size(); i++) {
 			send = i;
 			if (address == interface_state[i].multicast) {
@@ -88,7 +90,7 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 		if (send != -1) {
 			Packet* p = make_packet(send);
 			output(0).push(p);
-			click_chatter("I joined %d FeelsGoodMan",address);
+			click_chatter("I joined FeelsGoodMan"); //add address to this!
 		}
 		break;
 	}
