@@ -31,24 +31,21 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 	case 0:
 		send = -1;
 		done = false;
-		for (int i = 0; i < me->interface_state.size(); i++) {
+		for (int i = 0; i < me->groups.size(); i++) {
 			send = i;
-			if (address == me->interface_state[i].multicast) {
-				if (me->interface_state[i].mode == 2) {
+			if (address == me->groups[i].multicast) {
+				if (me->groups[i].mode == 2) {
 					done = true;
 					send = -1;
 					break;
 				}
-				me->interface_state[i].mode = 2;
+				me->groups[i].mode = 2;
 				done = true;
 				break;
 			}
 		}
 		if (!done) {
-			struct interface_record newrecord;
-			newrecord.mode = 2;
-			newrecord.multicast = address;
-			me->interface_state.push_back(newrecord);
+			groups.push_back(group_record(2, address));
 		}
 		if (send != -1) {
 			Packet* p = me->make_packet(send);
@@ -59,10 +56,10 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 	case 1:
 		send = -1;
 		done = false;
-		for (int i = 0; i < me->interface_state.size(); i++) {
+		for (int i = 0; i < me->groups.size(); i++) {
 			send = i;
-			if (address == me->interface_state[i].multicast) {
-				if (me->interface_state[i].mode == 1) {
+			if (address == me->groups[i].multicast) {
+				if (me->groups[i].mode == 1) {
 					done = true;
 					send = -1;
 					break;
@@ -73,11 +70,8 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 			}
 		}
 		if (!done) {
-			struct interface_record newrecord;
-			newrecord.mode = 1;
-			newrecord.multicast = address;
-			me->interface_state.push_back(newrecord);
-			send = 0;
+			groups.push_back(group_record(1, address));
+			send = groups.size()-1;
 		}
 		if (send != -1) {
 			Packet* p = me->make_packet(send);
@@ -118,16 +112,8 @@ Packet* MembershipReportSource::make_packet(int mode) {
 
 	igmph->querytype = 0x22;
 	igmph->numgroups = htons(interface_state.size());
+	igmph->groups = this->groups;
 
-	for (int i = 0; i < interface_state.size(); i++) {
-		if (i == mode) {
-            click_chatter("mode: %d",interface_state[i].mode);
-            igmph->groups.push_back(group_record(interface_state[i].mode + 2,interface_state[i].multicast));
-		}
-		else {
-            igmph->groups.push_back(group_record(interface_state[i].mode,interface_state[i].multicast));
-		}
-	}
 
 	_sequence++;
 

@@ -22,12 +22,6 @@ struct group_record {
     }
 };
 
-struct interface_record {
-	IPAddress multicast;
-	Vector<IPAddress> addresses;//=always empty in our case
-	int mode;//2 = exclude , 1 = include
-};
-
 struct igmp_report_packet {
 	uint8_t querytype;//=0x22
 	uint8_t reserved;//=0
@@ -57,7 +51,7 @@ private:
 	IPAddress _dstIP;
 	uint32_t _sequence;
 
-	Vector<struct interface_record> interface_state;
+	Vector<struct group_record> groups;
 };
 
 CLICK_ENDDECLS
