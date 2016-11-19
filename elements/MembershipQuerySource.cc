@@ -28,15 +28,6 @@ int MembershipQuerySource::configure(Vector<String> &conf, ErrorHandler *errh) {
 	return 0;
 }
 
-/*Packet* MembershipQuerySource::pull(int){
-	Packet* p = make_packet();
-	if(p == 0){
-		return 0;
-	}
-	click_chatter("Got a packet of size %d",p->length());
-	return p;
-}*/
-
 void MembershipQuerySource::run_timer(Timer* timer) {
 	if (Packet* q = make_packet()) {
 		output(0).push(q);
@@ -56,7 +47,7 @@ Packet* MembershipQuerySource::make_packet() {
 	iph->ip_v = 4;
 	iph->ip_hl = sizeof(click_ip) >> 2;
 	iph->ip_len = htons(q->length());
-	uint16_t ip_id = ((_sequence) % 0xFFFF) + 1; // ensure ip_id != 0
+	uint16_t ip_id = ((_sequence) % 0xFFFF) + 1;
 	iph->ip_id = htons(ip_id);
 	iph->ip_p = IP_PROTO_IGMP;
 	iph->ip_ttl = 1;
