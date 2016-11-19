@@ -34,18 +34,18 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 		for (int i = 0; i < me->groups.size(); i++) {
 			send = i;
 			if (address == me->groups[i].multicast) {
-				if (me->groups[i].type == 2) {
+				if (me->groups[i].type == 1) {
 					done = true;
 					send = -1;
 					break;
 				}
-				me->groups[i].type = 2;
+				me->groups[i].type = 1;
 				done = true;
 				break;
 			}
 		}
 		if (!done) {
-			me->groups.push_back(group_record(2, address));
+			me->groups.push_back(group_record(1, address));
 		}
 		if (send != -1) {
 			Packet* p = me->make_packet(send);
@@ -59,18 +59,18 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 		for (int i = 0; i < me->groups.size(); i++) {
 			send = i;
 			if (address == me->groups[i].multicast) {
-				if (me->groups[i].type == 1) {
+				if (me->groups[i].type == 2) {
 					done = true;
 					send = -1;
 					break;
 				}
-				me->groups[i].type = 1;
+				me->groups[i].type = 2;
 				done = true;
 				break;
 			}
 		}
 		if (!done) {
-			me->groups.push_back(group_record(1, address));
+			me->groups.push_back(group_record(2, address));
 			send = me->groups.size()-1;
 		}
 		if (send != -1) {
@@ -90,7 +90,7 @@ void MembershipReportSource::add_handlers() {
 
 Packet* MembershipReportSource::make_packet(int mode) {
 	int headroom = sizeof(click_ether);
-	WritablePacket *q = Packet::make(headroom, 0, sizeof(click_ip) + sizeof(struct igmp_report_packet), 0);
+	WritablePacket *q = Packet::make(headroom, 0, sizeof(click_ip) + sizeof(struct igmp_report_packet) + groups.size() * sizeof(struct group_record), 0);
 	if (!q)
 		return 0;
 	memset(q->data(), '\0', sizeof(click_ip) + sizeof(struct igmp_report_packet));
@@ -113,24 +113,27 @@ Packet* MembershipReportSource::make_packet(int mode) {
 	igmph->querytype = 0x22;
 	igmph->numgroups = htons(this->groups.size());
 
+	group_record* gr = (group_record*)(igmph + 1);
 	for (int i = 0; i < groups.size(); i++) {
-		click_chatter("type: %d, aux_len: %d, numsources: %d", groups[i].type, groups[i].aux_len, groups[i].numsources);
+		if (i == mode){
+			groups[i].type = groups[i].type + 2;
+		}
+		gr->type = groups[i].type;
+		gr->aux_len = groups[i].aux_len;
+		gr->numsources = groups[i].numsources;
+		gr->multicast = groups[i].multicast;
+		group_record* ngr = (group_record*)(gr+1);
+		gr = ngr;
+		if (i == mode) {
+			groups[i].type = groups[i].type - 2;
+		}
 	}
-
-	igmph->groups = this->groups;
-
-
-
 
 	_sequence++;
 
-	igmph->checksum = click_in_cksum((const unsigned char *)igmph, sizeof(igmp_report_packet));
+	igmph->checksum = click_in_cksum((const unsigned char *)igmph, sizeof(igmp_report_packet) + groups.size() * sizeof(group_record));
 
 	q->set_dst_ip_anno(_dstIP);
-    
-    for (int i = 0; i < igmph->groups.size(); i++) {
-        click_chatter("type: %d, aux_len: %d, numsources: %d", igmph->groups[i].type, igmph->groups[i].aux_len, igmph->groups[i].numsources);
-    }
 
 	return q;
 }

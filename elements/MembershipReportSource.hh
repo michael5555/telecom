@@ -12,7 +12,7 @@ struct group_record {
 	uint8_t aux_len;//=0
 	uint16_t numsources;
 	IPAddress multicast;
-	Vector<IPAddress> addresses;
+	//Vector<IPAddress> addresses;
     
     group_record(uint8_t ty,IPAddress mc){
         type = ty;
@@ -28,7 +28,6 @@ struct igmp_report_packet {
 	uint16_t checksum;
 	uint16_t reserved2;//=0
 	uint16_t numgroups;//??
-	Vector<struct group_record> groups;//??
 };
 
 class MembershipReportSource : public Element {
