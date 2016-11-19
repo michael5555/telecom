@@ -34,18 +34,18 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 		for (int i = 0; i < me->groups.size(); i++) {
 			send = i;
 			if (address == me->groups[i].multicast) {
-				if (me->groups[i].mode == 2) {
+				if (me->groups[i].type == 2) {
 					done = true;
 					send = -1;
 					break;
 				}
-				me->groups[i].mode = 2;
+				me->groups[i].type = 2;
 				done = true;
 				break;
 			}
 		}
 		if (!done) {
-			groups.push_back(group_record(2, address));
+			me->groups.push_back(group_record(2, address));
 		}
 		if (send != -1) {
 			Packet* p = me->make_packet(send);
@@ -59,19 +59,19 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 		for (int i = 0; i < me->groups.size(); i++) {
 			send = i;
 			if (address == me->groups[i].multicast) {
-				if (me->groups[i].mode == 1) {
+				if (me->groups[i].type == 1) {
 					done = true;
 					send = -1;
 					break;
 				}
-				me->groups[i].mode = 1;
+				me->groups[i].type = 1;
 				done = true;
 				break;
 			}
 		}
 		if (!done) {
-			groups.push_back(group_record(1, address));
-			send = groups.size()-1;
+			me->groups.push_back(group_record(1, address));
+			send = me->groups.size()-1;
 		}
 		if (send != -1) {
 			Packet* p = me->make_packet(send);
@@ -111,7 +111,7 @@ Packet* MembershipReportSource::make_packet(int mode) {
 	igmp_report_packet *igmph = (igmp_report_packet *)(iph + 1);
 
 	igmph->querytype = 0x22;
-	igmph->numgroups = htons(interface_state.size());
+	igmph->numgroups = htons(this->groups.size());
 	igmph->groups = this->groups;
 
 
