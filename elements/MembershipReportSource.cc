@@ -64,7 +64,7 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 					send = -1;
 					break;
 				}
-				me->interface_state[i].mode = 1;
+				me->groups[i].mode = 1;
 				done = true;
 				break;
 			}
