@@ -117,18 +117,16 @@ Packet* MembershipReportSource::make_packet(int mode) {
 	igmp_report_packet *igmph = (igmp_report_packet *)(iph + 1);
 
 	igmph->querytype = 0x22;
-	igmph->numgroups = interface_state.size();
+	igmph->numgroups = htons(interface_state.size());
 
 	for (int i = 0; i < interface_state.size(); i++) {
-		struct group_record newrecord;
 		if (i == mode) {
-			newrecord.type = interface_state[i].mode + 2;
+            click_chatter("mode: %d",interface_state[i].mode);
+            igmph->groups.push_back(group_record(interface_state[i].mode + 2,interface_state[i].multicast));
 		}
 		else {
-			newrecord.type = interface_state[i].mode;
+            igmph->groups.push_back(group_record(interface_state[i].mode,interface_state[i].multicast));
 		}
-		newrecord.multicast = interface_state[i].multicast;
-		igmph->groups.push_back(newrecord);
 	}
 
 	_sequence++;

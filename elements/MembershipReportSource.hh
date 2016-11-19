@@ -13,6 +13,13 @@ struct group_record {
 	uint16_t numsources;
 	IPAddress multicast;
 	Vector<IPAddress> addresses;
+    
+    group_record(uint8_t ty,IPAddress mc){
+        type = ty;
+        multicast = mc;
+        aux_len = 0;
+        numsources = 0;
+    }
 };
 
 struct interface_record {

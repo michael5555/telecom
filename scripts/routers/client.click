@@ -57,12 +57,7 @@ elementclass Client {
 		-> ip;
 
 	source::MembershipReportSource(SRC $address)
+		->arpq
 		-> output
 }
 
-
-myclient::Client(sourceAddr,router_client_network1_address)
-	-> ToDump(switch.dump)
-	-> Discard
-
-myclient[1] -> myclient
