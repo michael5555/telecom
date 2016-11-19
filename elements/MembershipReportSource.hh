@@ -40,8 +40,6 @@ public:
 	const char *processing() const { return PUSH; }
 	int configure(Vector<String>&, ErrorHandler*);
 
-	//Packet* pull(int);
-
 	static int writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh);
 	void add_handlers();
 

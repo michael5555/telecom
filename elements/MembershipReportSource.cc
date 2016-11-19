@@ -21,15 +21,6 @@ int MembershipReportSource::configure(Vector<String> &conf, ErrorHandler *errh) 
 	return 0;
 }
 
-/*Packet* MembershipReportSource::pull(int) {
-	Packet* p = make_packet();
-	if (p == 0) {
-		return 0;
-	}
-	click_chatter("Got a packet of size %d", p->length());
-	return p;
-}*/
-
 int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
 	MembershipReportSource* me = (MembershipReportSource *)e;
 	IPAddress address;
@@ -58,7 +49,6 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 			newrecord.mode = 2;
 			newrecord.multicast = address;
 			me->interface_state.push_back(newrecord);
-			send = 0;
 		}
 		if (send != -1) {
 			Packet* p = me->make_packet(send);
@@ -104,7 +94,7 @@ void MembershipReportSource::add_handlers() {
 	add_write_handler("join", writer, 1);
 }
 
-Packet* MembershipReportSource::make_packet(int mode) { //NEEDS TO ADD LIST OF REPORTS!
+Packet* MembershipReportSource::make_packet(int mode) {
 	int headroom = sizeof(click_ether);
 	WritablePacket *q = Packet::make(headroom, 0, sizeof(click_ip) + sizeof(struct igmp_report_packet), 0);
 	if (!q)
@@ -116,7 +106,7 @@ Packet* MembershipReportSource::make_packet(int mode) { //NEEDS TO ADD LIST OF R
 	iph->ip_v = 4;
 	iph->ip_hl = sizeof(click_ip) >> 2;
 	iph->ip_len = htons(q->length());
-	uint16_t ip_id = ((_sequence) % 0xFFFF) + 1; // ensure ip_id != 0
+	uint16_t ip_id = ((_sequence) % 0xFFFF) + 1;
 	iph->ip_id = htons(ip_id);
 	iph->ip_p = 2;
 	iph->ip_ttl = 1;

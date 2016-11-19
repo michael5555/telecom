@@ -40,8 +40,6 @@ class MembershipQuerySource : public Element {
 		const char *port_count() const	{ return "0-1/1"; }
 		const char *processing() const	{ return PUSH; }
 		int configure(Vector<String>&, ErrorHandler*);
-		
-		//Packet* pull(int);
 
 		void run_timer(Timer*);
 
