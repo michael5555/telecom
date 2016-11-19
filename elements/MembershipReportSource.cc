@@ -119,9 +119,7 @@ Packet* MembershipReportSource::make_packet(int mode) {
 
 	igmph->groups = this->groups;
 
-	for (int i = 0; i < igmph->groups.size(); i++) {
-		click_chatter("type: %d, aux_len: %d, numsources: %d", igmph->groups[i].type, igmph->groups[i].aux_len, igmph->groups[i].numsources);
-	}
+
 
 
 	_sequence++;
@@ -129,6 +127,10 @@ Packet* MembershipReportSource::make_packet(int mode) {
 	igmph->checksum = click_in_cksum((const unsigned char *)igmph, sizeof(igmp_report_packet));
 
 	q->set_dst_ip_anno(_dstIP);
+    
+    for (int i = 0; i < igmph->groups.size(); i++) {
+        click_chatter("type: %d, aux_len: %d, numsources: %d", igmph->groups[i].type, igmph->groups[i].aux_len, igmph->groups[i].numsources);
+    }
 
 	return q;
 }

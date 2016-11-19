@@ -57,6 +57,7 @@ elementclass Client {
 		-> ip;
 
 	source::MembershipReportSource(SRC $address)
+		-> ToDump(switch.dump, ENCAP IP)
 		->arpq
 		-> output
 }

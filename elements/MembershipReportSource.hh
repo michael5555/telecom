@@ -28,7 +28,7 @@ struct igmp_report_packet {
 	uint16_t checksum;
 	uint16_t reserved2;//=0
 	uint16_t numgroups;//??
-	Vector<group_record> groups;//??
+	Vector<struct group_record> groups;//??
 };
 
 class MembershipReportSource : public Element {
