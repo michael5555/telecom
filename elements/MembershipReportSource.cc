@@ -112,7 +112,16 @@ Packet* MembershipReportSource::make_packet(int mode) {
 
 	igmph->querytype = 0x22;
 	igmph->numgroups = htons(this->groups.size());
+
+	for (int i = 0; i < groups.size(); i++) {
+		click_chatter("type: %d, aux_len: %d, numsources: %d", groups[i].type, groups[i].aux_len, groups[i].numsources);
+	}
+
 	igmph->groups = this->groups;
+
+	for (int i = 0; i < igmph->groups.size(); i++) {
+		click_chatter("type: %d, aux_len: %d, numsources: %d", igmph->groups[i].type, igmph->groups[i].aux_len, igmph->groups[i].numsources);
+	}
 
 
 	_sequence++;
