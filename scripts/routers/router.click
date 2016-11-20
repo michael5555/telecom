@@ -24,7 +24,8 @@ elementclass Router {
 					$client2_address:ip/32 0,
 					$server_address:ipnet 1,
 					$client1_address:ipnet 2,
-					$client2_address:ipnet 3);
+					$client2_address:ipnet 3,
+					224.0.0.22 4);
 	
 	// ARP responses are copied to each ARPQuerier and the host.
 	arpt :: Tee (3);
@@ -163,6 +164,10 @@ elementclass Router {
 
 	client2_frag[1]
 		-> ICMPError($client2_address, unreachable, needfrag)
+		-> rt;
+
+	rt[4]
+		-> MembershipQuerySource(SRC ???) //WHAT SRC ? HUH ? O.O FeelsBadMan
 		-> rt;
 }
 

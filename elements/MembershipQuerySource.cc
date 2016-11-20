@@ -35,6 +35,74 @@ void MembershipQuerySource::run_timer(Timer* timer) {
 	}
 }
 
+void MembershipQuerySource::react_to_report(Packet* p) {
+	click_ip *iph = (click_ip*)p->data();
+	if (iph->ip_p != IP_PROTO_IGMP) {
+		return;
+	}
+	igmp_report_packet *igmph = (igmp_report_packet *)(iph + 1);
+	if (igmph->querytype != 0x22) {
+		return;
+	}
+	group_record* gr = (group_record*)(igmph + 1);
+	for (int i = 0; i < igmph->numgroups; i++) {
+		bool found = false;
+		switch (gr->type) {
+		case 1:
+			for (int j = 0; j < state.size(); j++) {
+				if (state[j].groupaddress == gr->multicast) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				state.push_back(routing_state(1, gr->multicast));
+			}
+			found = false;
+			break;
+		case 2:
+			for (int j = 0; j < state.size(); j++) {
+				if (state[j].groupaddress == gr->multicast) {
+					state[j].type = 2;
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				state.push_back(routing_state(2, gr->multicast));
+			}
+			found = false;
+			break;
+		case 3:
+			for (int j = 0; j < state.size(); j++) {
+				if (state[j].groupaddress == gr->multicast) {
+					state.erase(state.begin() + j);
+					this->group = gr->multicast;
+					Packet* p = make_packet();
+					output(0).push(p);
+					break;
+				}
+			}
+			break;
+		case 4:
+			for (int j = 0; j < state.size(); j++) {
+				if (state[j].groupaddress == gr->multicast) {
+					if (state[j].type != 2) {
+						state[j].type = 2;
+						break;
+					}
+				}
+				else {
+					state.push_back(routing_state(2, gr->multicast));
+				}
+			}
+			break;
+		}
+		group_record* ngr = (group_record*)(gr + 1);
+		gr = ngr;
+	}
+}
+
 Packet* MembershipQuerySource::make_packet() {
 	int headroom = sizeof(click_ether);
 	WritablePacket *q = Packet::make(headroom, 0, sizeof(click_ip) + sizeof(struct igmp_query_packet), 0);

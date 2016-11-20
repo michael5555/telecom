@@ -50,7 +50,7 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 		if (send != -1) {
 			Packet* p = me->make_packet(send);
 			me->output(0).push(p);
-			click_chatter("I left FeelsBadMan"); //add address to this!
+			click_chatter("I left %s FeelsBadMan", address.unparse().c_str()); //add address to this!
 		}
 		break;
 	case 1:
@@ -76,7 +76,7 @@ int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, 
 		if (send != -1) {
 			Packet* p = me->make_packet(send);
 			me->output(0).push(p);
-			click_chatter("I joined FeelsGoodMan"); //add address to this!
+			click_chatter("I joined %s FeelsGoodMan", address.unparse().c_str()); //add address to this!
 		}
 		break;
 	}

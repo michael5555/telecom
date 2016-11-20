@@ -3,12 +3,6 @@
 // Packets for the network are put on output 0
 // Packets for the host are put on output 1
 
-AddressInfo(router_client_network1_address 192.168.2.254/24 00:50:BA:85:84:B1);
-AddressInfo(sourceAddr 192.168.2.1/24 00:50:BA:85:84:B2);
-
-
-
-
 elementclass Client {
 	$address, $gateway |
 
@@ -18,6 +12,7 @@ elementclass Client {
 					$address:ip/32 0,
 					$address:ipnet 0,
 					0.0.0.0/0.0.0.0 $gateway 1)
+					//,192.168.2.2 2)
 		-> [1]output;
 	
 
@@ -45,7 +40,7 @@ elementclass Client {
 
 	// Incoming Packets
 	input
-		-> HostEtherFilter($address,DROP_OTHER false)
+		-> HostEtherFilter($address)
 		-> in_cl :: Classifier(12/0806 20/0001, 12/0806 20/0002, 12/0800)
 		-> arp_res :: ARPResponder($address)
 		-> output;
@@ -56,9 +51,9 @@ elementclass Client {
 	in_cl[2]
 		-> ip;
 
+	//rt[2] ->
 	source::MembershipReportSource(SRC $address)
-		-> ToDump(switch.dump, ENCAP IP)
-		->arpq
+		-> arpq
 		-> output
 }
 

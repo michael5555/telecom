@@ -2,34 +2,9 @@
 #define CLICK_MEMBERSHIPQUERYSOURCE_HH
 #include <click/element.hh>
 #include <click/ipaddress.hh>
+#include "structs.hh"
 
 CLICK_DECLS
-
-struct resv_s_qrv {
-	uint8_t qrv : 3;
-	uint8_t s : 1;
-	uint8_t resv : 4;
-    
-    resv_s_qrv(uint8_t r, uint8_t ss , uint8_t q){
-        
-        resv = r;
-        s = ss;
-        qrv = q;
-    }
-};
-
-
-struct igmp_query_packet {
-    
-    uint8_t querytype;//=0x11
-    uint8_t maxrespcode;//100, change using handler
-    uint16_t checksum;
-    IPAddress groupaddress;//HANDLER!!!
-	resv_s_qrv  fields;
-    uint8_t qqic;//125, change using handler
-    uint16_t numsources;//=0
-    Vector<IPAddress> source_addresses;//empty
-};
 
 class MembershipQuerySource : public Element { 
 	public:
@@ -47,6 +22,8 @@ class MembershipQuerySource : public Element {
 		static int ipwriter(const String &conf, Element *e, void *thunk, ErrorHandler* errh);
 		void add_handlers();
 
+		void react_to_report(Packet*);
+
 	private:
 		Packet* make_packet();
 		int s;
@@ -58,6 +35,8 @@ class MembershipQuerySource : public Element {
 		IPAddress _srcIP;
 		IPAddress _dstIP;
 		uint32_t _sequence;
+
+		Vector<struct routing_state> state;
 };
 
 CLICK_ENDDECLS
