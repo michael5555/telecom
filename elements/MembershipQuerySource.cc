@@ -20,22 +20,22 @@ int MembershipQuerySource::configure(Vector<String> &conf, ErrorHandler *errh) {
 	this->maxrespcode = 100;
 	this->qqic = 125;
 	this->group = IPAddress(String("0.0.0.0"));
-
+	/*
 	Timer* timer = new Timer(this);
 	timer->initialize(this);
 	timer->schedule_after_msec(1000);
-
+	*/
 	return 0;
 }
-
+/*
 void MembershipQuerySource::run_timer(Timer* timer) {
 	if (Packet* q = make_packet()) {
 		output(0).push(q);
 		timer->reschedule_after_msec(1000);
 	}
-}
+}*/
 
-void MembershipQuerySource::react_to_report(Packet* p) {
+void MembershipQuerySource::push(int, Packet* p) {
 	click_ip *iph = (click_ip*)p->data();
 	if (iph->ip_p != IP_PROTO_IGMP) {
 		return;

@@ -16,13 +16,13 @@ class MembershipQuerySource : public Element {
 		const char *processing() const	{ return PUSH; }
 		int configure(Vector<String>&, ErrorHandler*);
 
-		void run_timer(Timer*);
+		//void run_timer(Timer*);
 
 		static int writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh);
 		static int ipwriter(const String &conf, Element *e, void *thunk, ErrorHandler* errh);
 		void add_handlers();
 
-		void react_to_report(Packet*);
+		void push(int,Packet*);
 
 	private:
 		Packet* make_packet();
