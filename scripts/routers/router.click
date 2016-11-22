@@ -25,7 +25,7 @@ elementclass Router {
 					$server_address:ipnet 1,
 					$client1_address:ipnet 2,
 					$client2_address:ipnet 3,
-					224.0.0.22 4);
+					224.0.0.0/4 4);
 	
 	// ARP responses are copied to each ARPQuerier and the host.
 	arpt :: Tee (3);
@@ -167,7 +167,23 @@ elementclass Router {
 		-> rt;
 
 	rt[4]
-		-> MembershipQuerySource(SRC ???) //WHAT SRC ? HUH ? O.O FeelsBadMan
-		-> rt;
+		-> ps::PaintSwitch
+
+	ps[2]
+		-> MembershipQuerySource(SRC $client1_address)
+		-> client1_paint
+		-> client1_ipgw
+		-> FixIPSrc($client2_address)
+		-> client1_frag
+		-> client1_arpq;
+
+	ps[3]
+		-> MembershipQuerySource(SRC $client2_address)
+		-> client2_paint
+		-> client2_ipgw
+		-> FixIPSrc($client2_address)
+		-> client2_frag
+		-> client2_arpq;
+
 }
 
