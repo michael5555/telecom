@@ -169,10 +169,16 @@ elementclass Router {
 	rt[4]
 		-> ps::PaintSwitch
 
+	ps[0]
+		-> Discard
+
+	ps[1]
+		-> Discard
+
 	ps[2]
 		-> MembershipQuerySource(SRC $client1_address)
 		-> client1_paint
-		-> client1_ipgw
+		-> client1_ipgw2 :: IPGWOptions($client1_address)
 		-> FixIPSrc($client2_address)
 		-> client1_frag
 		-> client1_arpq;
@@ -180,7 +186,7 @@ elementclass Router {
 	ps[3]
 		-> MembershipQuerySource(SRC $client2_address)
 		-> client2_paint
-		-> client2_ipgw
+		-> client2_ipgw2 :: IPGWOptions($client2_address)
 		-> FixIPSrc($client2_address)
 		-> client2_frag
 		-> client2_arpq;
