@@ -69,18 +69,22 @@ elementclass Router {
 	// Input and output paths for interface 2
 	input[2]
 		-> HostEtherFilter($client2_address)
+
 		-> client2_class :: Classifier(12/0806 20/0001, 12/0806 20/0002, -)
 		-> ARPResponder($client2_address)
 		-> [2]output;
 
 	client2_arpq :: ARPQuerier($client2_address)
+
 		-> [2]output;
 
 	client2_class[1]
 		-> arpt[2]
+
 		-> [1]client2_arpq;
 
 	client2_class[2]
+
 		-> Paint(3)
 		-> ip;
 	
@@ -90,6 +94,7 @@ elementclass Router {
 	
 	// Forwarding paths per interface
 	rt[1]
+
 		-> DropBroadcasts
 		-> server_paint :: PaintTee(1)
 		-> server_ipgw :: IPGWOptions($server_address)
@@ -116,11 +121,12 @@ elementclass Router {
 	
 
 	rt[2]
+
 		-> DropBroadcasts
+		-> client1_ttl :: DecIPTTL
 		-> client1_paint :: PaintTee(2)
 		-> client1_ipgw :: IPGWOptions($client1_address)
 		-> FixIPSrc($client1_address)
-		-> client1_ttl :: DecIPTTL
 		-> client1_frag :: IPFragmenter(1500)
 		-> client1_arpq;
 	
@@ -142,11 +148,12 @@ elementclass Router {
 
 
 	rt[3]
+
 		-> DropBroadcasts
+		-> client2_ttl :: DecIPTTL
 		-> client2_paint :: PaintTee(2)
 		-> client2_ipgw :: IPGWOptions($client2_address)
 		-> FixIPSrc($client2_address)
-		-> client2_ttl :: DecIPTTL
 		-> client2_frag :: IPFragmenter(1500)
 		-> client2_arpq;
 	
@@ -176,12 +183,15 @@ elementclass Router {
 		-> Discard
 
 	ps[2]
+
 		-> MembershipQuerySource(SRC $client1_address)
-		-> client1_arpq;
+		-> MarkIPHeader
+		-> client1_ipgw;
 
 	ps[3]
 		-> MembershipQuerySource(SRC $client2_address)
-		-> client2_arpq;
+		-> MarkIPHeader
+		-> client2_ipgw;
 
 }
 

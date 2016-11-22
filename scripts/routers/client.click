@@ -11,17 +11,20 @@ elementclass Client {
 		-> rt :: StaticIPLookup(
 					$address:ip/32 0,
 					$address:ipnet 0,
-					0.0.0.0/0.0.0.0 $gateway 1)
-					//,192.168.2.2 2)
+					0.0.0.0/0.0.0.0 $gateway 1,
+					192.168.2.2 2)
 		-> [1]output;
 	
 
 
 	rt[1]
+		-> Print($address,0)
 		-> DropBroadcasts
+		-> Print($address,0)
+		-> ttl :: DecIPTTL
+		-> Print($address,0)
 		-> ipgw :: IPGWOptions($address)
 		-> FixIPSrc($address)
-		-> ttl :: DecIPTTL
 		-> frag :: IPFragmenter(1500)
 		-> arpq :: ARPQuerier($address)
 		-> output;
@@ -40,6 +43,7 @@ elementclass Client {
 
 	// Incoming Packets
 	input
+		-> Print($address,0)
 		-> HostEtherFilter($address)
 		-> in_cl :: Classifier(12/0806 20/0001, 12/0806 20/0002, 12/0800)
 		-> arp_res :: ARPResponder($address)
@@ -51,9 +55,11 @@ elementclass Client {
 	in_cl[2]
 		-> ip;
 
-	//rt[2] ->
+	rt[2] 
+		-> Discard
+
 	source::MembershipReportSource(SRC $address)
-		-> arpq
-		-> output
+		-> MarkIPHeader
+		-> ipgw
 }
 
