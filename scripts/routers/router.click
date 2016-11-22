@@ -177,17 +177,11 @@ elementclass Router {
 
 	ps[2]
 		-> MembershipQuerySource(SRC $client1_address)
-		-> client1_paint2 :: PaintTee(2)
-		-> client1_ipgw2 :: IPGWOptions($client1_address)
-		-> FixIPSrc($client2_address)
-		-> client1_frag
+		-> client1_arpq;
 
 	ps[3]
 		-> MembershipQuerySource(SRC $client2_address)
-		-> client2_paint2 :: PaintTee(2)
-		-> client2_ipgw2 :: IPGWOptions($client2_address)
-		-> FixIPSrc($client2_address)
-		-> client2_frag
+		-> client2_arpq;
 
 }
 
