@@ -18,11 +18,8 @@ elementclass Client {
 
 
 	rt[1]
-		-> Print($address,0)
 		-> DropBroadcasts
-		-> Print($address,0)
 		-> ttl :: DecIPTTL
-		-> Print($address,0)
 		-> ipgw :: IPGWOptions($address)
 		-> FixIPSrc($address)
 		-> frag :: IPFragmenter(1500)
