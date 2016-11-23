@@ -40,7 +40,6 @@ elementclass Client {
 
 	// Incoming Packets
 	input
-		-> Print($address,0)
 		-> HostEtherFilter($address)
 		-> in_cl :: Classifier(12/0806 20/0001, 12/0806 20/0002, 12/0800)
 		-> arp_res :: ARPResponder($address)
@@ -53,10 +52,9 @@ elementclass Client {
 		-> ip;
 
 	rt[2] 
-		-> Print("Got it!",0)
-		-> Discard
+		-> [1]output
 
-	source::MembershipReportSource(SRC $address)
+	source::MembershipReportSource(SRC $gateway)
 		-> MarkIPHeader
 		-> ipgw
 }

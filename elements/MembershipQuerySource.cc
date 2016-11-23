@@ -64,7 +64,7 @@ void MembershipQuerySource::push(int, Packet* p) {
 				}
 			}
 			if (!found) {
-				state.push_back(routing_state(1, gr->multicast, iph->ip_src));
+				state.push_back(routing_state(1, gr->multicast,iph->ip_src));
 			}
 			found = false;
 			break;
@@ -77,7 +77,7 @@ void MembershipQuerySource::push(int, Packet* p) {
 				}
 			}
 			if (!found) {
-				state.push_back(routing_state(2, gr->multicast, iph->ip_src));
+				state.push_back(routing_state(2, gr->multicast,iph->ip_src));
 			}
 			found = false;
 			break;
@@ -97,13 +97,15 @@ void MembershipQuerySource::push(int, Packet* p) {
 				if (state[j].groupaddress == gr->multicast) {
 					if (state[j].type != 2) {
 						state[j].type = 2;
-						break;
 					}
-				}
-				else {
-					state.push_back(routing_state(2, gr->multicast, iph->ip_src));
+                    found = true;
+                    break;
 				}
 			}
+            if (!found){
+                state.push_back(routing_state(2,gr->multicast,iph->ip_src));
+            }
+            found = false;
 			break;
 		}
 		group_record* ngr = (group_record*)(gr + 1);
