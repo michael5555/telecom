@@ -38,6 +38,14 @@ void MembershipQuerySource::run_timer(Timer* timer) {
 void MembershipQuerySource::push(int, Packet* p) {
 	click_ip *iph = (click_ip*)p->data();
 	if (iph->ip_p != IP_PROTO_IGMP) {
+		for (int i = 0; i < state.size(); i++) {
+			if (_srcIP == state[i].source) {
+				if (state[i].source == 2) {
+					output(1).push(p);
+				}
+				break;
+			}
+		}
 		return;
 	}
 	igmp_report_packet *igmph = (igmp_report_packet *)(iph + 1);
@@ -78,8 +86,8 @@ void MembershipQuerySource::push(int, Packet* p) {
 				if (state[j].groupaddress == gr->multicast) {
 					state.erase(state.begin() + j);
 					this->group = gr->multicast;
-					Packet* p = make_packet();
-					output(0).push(p);
+					Packet* q = make_packet();
+					output(0).push(q);
 					break;
 				}
 			}
@@ -93,7 +101,7 @@ void MembershipQuerySource::push(int, Packet* p) {
 					}
 				}
 				else {
-					state.push_back(routing_state(2, gr->multicast));
+					state.push_back(routing_state(2, gr->multicast, iph->ip_src));
 				}
 			}
 			break;

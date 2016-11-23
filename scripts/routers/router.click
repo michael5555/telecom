@@ -183,13 +183,20 @@ elementclass Router {
 		-> Discard
 
 	ps[2]
-
-		-> MembershipQuerySource(SRC $client1_address)
+		-> MQS1 :: MembershipQuerySource(SRC $client1_address)
 		-> MarkIPHeader
 		-> client1_ipgw;
 
 	ps[3]
-		-> MembershipQuerySource(SRC $client2_address)
+		-> MQS2 :: MembershipQuerySource(SRC $client2_address)
+		-> MarkIPHeader
+		-> client2_ipgw;
+
+	MQS1[1]
+		-> MarkIPHeader
+		-> client1_ipgw;
+
+	MQS2[1]
 		-> MarkIPHeader
 		-> client2_ipgw;
 

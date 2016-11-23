@@ -26,11 +26,13 @@ struct igmp_report_packet {
 
 struct routing_state {
 	IPAddress groupaddress;
+	IPAddress source;
 	uint8_t type;
 
-	routing_state(uint8_t ty, IPAddress ga) {
+	routing_state(uint8_t ty, IPAddress ga, IPAddress s) {
 		type = ty;
 		groupaddress = ga;
+		source = s;
 	}
 };
 
