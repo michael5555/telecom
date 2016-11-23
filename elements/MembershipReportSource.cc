@@ -21,7 +21,7 @@ int MembershipReportSource::configure(Vector<String> &conf, ErrorHandler *errh) 
 	return 0;
 }
 
-void MembershipReportSource::push(int, packet* p) {
+void MembershipReportSource::push(int, Packet* p) {
 	click_ip *iph = (click_ip*)p->data();
 	if (iph->ip_p != IP_PROTO_IGMP) {
 		for (int i = 0; i < groups.size(); i++) {

@@ -16,7 +16,7 @@ class MembershipReportSource : public Element {
 		const char *processing() const { return PUSH; }
 		int configure(Vector<String>&, ErrorHandler*);
 
-		void push(int, packet*);
+		void push(int, Packet*);
 
 		static int writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh);
 		void add_handlers();
