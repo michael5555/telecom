@@ -12,7 +12,7 @@ elementclass Client {
 					$address:ip/32 0,
 					$address:ipnet 0,
 					0.0.0.0/0.0.0.0 $gateway 1,
-					192.168.2.2 2)
+					224.0.0.0/4 2)
 		-> [1]output;
 	
 
@@ -53,6 +53,7 @@ elementclass Client {
 		-> ip;
 
 	rt[2] 
+		-> Print("Got it!",0)
 		-> Discard
 
 	source::MembershipReportSource(SRC $address)

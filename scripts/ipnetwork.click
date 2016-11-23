@@ -113,8 +113,8 @@ client_network2[3]
 	-> ToDump("client_network2.pcap");
 
 // Generate traffic for the multicast server.
-/*RatedSource("data", 1, -1, true)
+RatedSource("data", 1, -1, true)
 	-> DynamicUDPIPEncap(multicast_server_address:ip, 1234, multicast_client_address:ip, 1234) 
 	-> EtherEncap(0x0800, multicast_server_address:eth, multicast_server_address:eth) /// The MAC addresses here should be from the multicast_server to get past the HostEtherFilter. This way we can reuse the input from the network for the applications.
 	-> IPPrint("multicast_server -- transmitted a UDP packet")
-	-> [0]multicast_server*/
+	-> [0]multicast_server

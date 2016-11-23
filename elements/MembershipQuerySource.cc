@@ -40,7 +40,7 @@ void MembershipQuerySource::push(int, Packet* p) {
 	if (iph->ip_p != IP_PROTO_IGMP) {
 		for (int i = 0; i < state.size(); i++) {
 			if (_srcIP == state[i].source) {
-				if (state[i].source == 2) {
+				if (state[i].type == 2) {
 					output(1).push(p);
 				}
 				break;
@@ -64,7 +64,7 @@ void MembershipQuerySource::push(int, Packet* p) {
 				}
 			}
 			if (!found) {
-				state.push_back(routing_state(1, gr->multicast));
+				state.push_back(routing_state(1, gr->multicast, iph->ip_src));
 			}
 			found = false;
 			break;
@@ -77,7 +77,7 @@ void MembershipQuerySource::push(int, Packet* p) {
 				}
 			}
 			if (!found) {
-				state.push_back(routing_state(2, gr->multicast));
+				state.push_back(routing_state(2, gr->multicast, iph->ip_src));
 			}
 			found = false;
 			break;

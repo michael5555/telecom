@@ -177,18 +177,26 @@ elementclass Router {
 		-> ps::PaintSwitch
 
 	ps[0]
-		-> Discard
+		-> Discard;
 
 	ps[1]
-		-> Discard
+		-> udpt :: Tee(2)
+
+	udpt[0]
+		-> MQS1 :: MembershipQuerySource(SRC $client1_address)
+
+
+	udpt[1]
+		-> MQS2 :: MembershipQuerySource(SRC $client2_address)
+
 
 	ps[2]
-		-> MQS1 :: MembershipQuerySource(SRC $client1_address)
+		-> MQS1
 		-> MarkIPHeader
 		-> client1_ipgw;
 
 	ps[3]
-		-> MQS2 :: MembershipQuerySource(SRC $client2_address)
+		-> MQS2 
 		-> MarkIPHeader
 		-> client2_ipgw;
 
