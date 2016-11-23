@@ -12,9 +12,11 @@ class MembershipReportSource : public Element {
 		~MembershipReportSource();
 
 		const char *class_name() const { return "MembershipReportSource"; }
-		const char *port_count() const { return "0-1/1"; }
+		const char *port_count() const { return "0-1/2"; }
 		const char *processing() const { return PUSH; }
 		int configure(Vector<String>&, ErrorHandler*);
+
+		void push(int, packet*);
 
 		static int writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh);
 		void add_handlers();

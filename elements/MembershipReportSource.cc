@@ -21,6 +21,26 @@ int MembershipReportSource::configure(Vector<String> &conf, ErrorHandler *errh) 
 	return 0;
 }
 
+void MembershipReportSource::push(int, packet* p) {
+	click_ip *iph = (click_ip*)p->data();
+	if (iph->ip_p != IP_PROTO_IGMP) {
+		for (int i = 0; i < groups.size(); i++) {
+			if (iph->ip_dst == groups[i].multicast) {
+				if (groups[i].type == 2) {
+					output(1).push(p);
+				}
+				break;
+			}
+		}
+		return;
+	}
+	igmp_query_packet *igmph = (igmp_query_packet *)(iph + 1);
+	if (igmph->querytype != 0x11) {
+		return;
+	}
+	output(0).push(make_packet(-1));
+}
+
 int MembershipReportSource::writer(const String &conf, Element *e, void *thunk, ErrorHandler* errh) {
 	MembershipReportSource* me = (MembershipReportSource *)e;
 	IPAddress address;
