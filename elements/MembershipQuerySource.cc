@@ -53,7 +53,7 @@ void MembershipQuerySource::push(int, Packet* p) {
 		return;
 	}
 	group_record* gr = (group_record*)(igmph + 1);
-	for (int i = 0; i < igmph->numgroups; i++) {
+	for (int i = 0; i < htons(igmph->numgroups); i++) {
 		bool found = false;
 		switch (gr->type) {
 		case 1:
