@@ -52,7 +52,7 @@ elementclass Client {
 		-> ip;
 
 	rt[2] 
-		-> source::MembershipReportSource(SRC $gateway)
+		-> source::MembershipReportSource(SRC $address)
 		-> MarkIPHeader
 		-> ipgw
 
